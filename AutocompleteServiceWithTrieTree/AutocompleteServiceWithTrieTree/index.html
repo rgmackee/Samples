@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+	<meta charset="utf-8" />
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+    <script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+    <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+    <style>
+        body {
+            font-family: Verdana;
+            font-size: 14px;
+            background-color: lightgrey; 
+        }
+        input[type=text] {
+            width: 200px;
+            padding: 7px 7px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        .ui-autocomplete 
+        { 
+            max-height: 390px;
+            overflow-y: scroll; 
+            overflow-x: hidden;
+        }
+        .sample
+        {
+            margin-top: 20px;
+            margin-left: 40px;
+            margin-right: 60px;
+        }
+    </style>
+</head>
+<body>
+    <div class="sample">
+        <p>This autocomplete sample gets its data from a REST API. The service loads a list of thousands of names from a text file I happened
+        to find online. 
+        These names are then loaded into a Trie data structure for ease of searching. The autocompletion starts from the second character typed.
+        All names are stored in lower case, so the search is not case-sensitive. </p>
+        <h3>Enter a name:</h3>
+        <input id="myText" type="text" />
+    </div>
+    <script>
+        $(function () {
+            var getData = function (request, response) {
+                $.getJSON(
+                    "http://localhost:62651/api/autocomplete/" + request.term,
+                    function (data) {
+                        response(data);
+                });
+            };
+            $("#myText").autocomplete({
+                source: getData,
+                minLength: 2
+            });
+        });
+    </script>
+</body>
+</html>
