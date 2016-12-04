@@ -16,8 +16,8 @@ namespace AutocompleteServiceWithTrieTree
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
-                routeTemplate: "api/{controller}/{prefix}",
-                defaults: new { prefix = " " }
+                routeTemplate: "api/{controller}/{value}",
+                defaults: new { value = RouteParameter.Optional }
             );
         }
     }

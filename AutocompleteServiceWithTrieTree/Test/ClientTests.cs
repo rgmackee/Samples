@@ -63,5 +63,19 @@ namespace Test
         {
             Assert.Throws<ArgumentNullException>(() => new Client(null));
         }
+
+        [Fact]
+        public void AddNewItemToTree()
+        {
+            bool added = client.AddItem("ale");
+            Assert.Equal<bool>(true, added);
+        }
+
+        [Fact]
+        public void DoNotAddExistingItem()
+        {
+            bool added = client.AddItem("arm");
+            Assert.Equal<bool>(false, added);
+        }
     }
 }

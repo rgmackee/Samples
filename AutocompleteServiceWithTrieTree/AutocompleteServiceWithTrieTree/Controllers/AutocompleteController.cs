@@ -1,4 +1,5 @@
 ﻿using AutoComplete;
+using AutocompleteServiceWithTrieTree.Models;
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -15,15 +16,15 @@ namespace AutocompleteServiceWithTrieTree.Controllers
             this.dataClient = dataClient;
         }
 
-        public IHttpActionResult GetMatches(string prefix)
+        public IHttpActionResult GetMatches(string value)
         {
             try
             {
-                prefix = prefix.ToLower();
+                value = value.Trim().ToLower();
                 //only take letters for this sample
-                if (Regex.IsMatch(prefix, "^[a-z]+$", RegexOptions.Compiled))
+                if (Regex.IsMatch(value, "^[a-z]+$", RegexOptions.Compiled))
                 {
-                    var list = dataClient.GetPrefixMatches(prefix).ToList();
+                    var list = dataClient.GetPrefixMatches(value).ToList();
                     if (list.Any())
                     {
                         list.Sort();
@@ -31,6 +32,21 @@ namespace AutocompleteServiceWithTrieTree.Controllers
                     }
                 }
                 return NotFound();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+        
+        [HttpPost]
+        public IHttpActionResult PostItem(string value)
+        {
+            try
+            {
+                value = value.Trim().ToLower();
+                bool added = dataClient.AddItem(value);
+                return Ok(new PostResult { Success = added });
             }
             catch (Exception ex)
             {

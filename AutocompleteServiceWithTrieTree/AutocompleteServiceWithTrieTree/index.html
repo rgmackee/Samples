@@ -18,28 +18,51 @@
             box-sizing: border-box;
             font-size: 14px;
         }
-        .ui-autocomplete 
-        { 
+        input[type=button] {
+            height: 35px; 
+            width: 90px;
+        }
+        .ui-autocomplete { 
             max-height: 390px;
             overflow-y: scroll; 
             overflow-x: hidden;
         }
-        .sample
-        {
+        .sample {
             margin-top: 20px;
             margin-left: 40px;
             margin-right: 60px;
+        }
+        .block {
+            float: left;
+            width: 100%;
+        }
+        .left {
+            float: left;
+            margin-right: 20px;
         }
     </style>
 </head>
 <body>
     <div class="sample">
-        <p>This autocomplete sample gets its data from a REST API. The service loads a list of thousands of names from a text file I happened
-        to find online. 
-        These names are then loaded into a Trie data structure for ease of searching. The autocompletion starts from the second character typed.
-        All names are stored in lower case, so the search is not case-sensitive. </p>
-        <h3>Enter a name:</h3>
-        <input id="myText" type="text" />
+        <div class="block">
+            <p>
+                This autocomplete sample gets its data from a REST API. The service loads a list of thousands of names from a text file I happened
+                to find online. These names are then loaded into a Trie data structure for ease of searching. The autocompletion starts from the second 
+                character typed. All names are stored in lower case, so the search is not case-sensitive. Adding a name does not persist the change in 
+                the source file.
+            </p>
+        </div>
+        <div class="block">
+            <div class="left">
+                <h3>Enter a name:</h3>
+                <input id="myText" type="text" />
+            </div>
+            <div class="left">
+                <h3>Add new name: </h3>
+                <input id="newName" type="text" />
+                <input id="add" type="button" value="Submit" />
+            </div>
+        </div>
     </div>
     <script>
         $(function () {
@@ -53,6 +76,19 @@
             $("#myText").autocomplete({
                 source: getData,
                 minLength: 2
+            });
+            $("#add").click(function () {
+                $.ajax({
+                    url: "http://localhost:62651/api/autocomplete/" + $("#newName").val(),
+                    type: "POST",
+                    contentType: "application/json",
+                    success: function (result) {
+                        if (result.Success)
+                            alert("The name was added successfully.");
+                        else
+                            alert("There was no change. The name was already in the list.")
+                    }
+                });
             });
         });
     </script>

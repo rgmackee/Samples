@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace AutoComplete.DataStructure
@@ -25,10 +26,15 @@ namespace AutoComplete.DataStructure
             }
         }
 
-        public void Add(string s)
+        public Node Add(string s)
         {
             //find the pivot character where to branch out for a different suffix. Root returned if first letter not found
-            var commonPrefix = FindCommonPrefixNode(s, true); 
+            var commonPrefix = FindCommonPrefixNode(s, true);
+            if (commonPrefix.Depth == s.Length && commonPrefix.Children.FirstOrDefault(n => n.Value == '$') != null)
+            {
+                //This word already exists as complete
+                return null;
+            }
             var current = commonPrefix;
             for (var i = current.Depth; i < s.Length; i++)
             {
@@ -38,6 +44,7 @@ namespace AutoComplete.DataStructure
             }
             //word is complete, mark it as such
             current.Children.Add(new Node('$', current, current.Depth + 1));
+            return current;
         }
 
         public IEnumerable<string> FindMatches(string input)
@@ -61,7 +68,7 @@ namespace AutoComplete.DataStructure
             }
         }
 
-        private Node FindCommonPrefixNode(string input, bool isAdding = false)
+        internal Node FindCommonPrefixNode(string input, bool isAdding = false)
         {
             var currentNode = root;
             var node = currentNode;

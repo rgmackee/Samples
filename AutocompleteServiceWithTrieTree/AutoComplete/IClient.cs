@@ -9,5 +9,6 @@ namespace AutoComplete
     public interface IClient
     {
         IEnumerable<string> GetPrefixMatches(string prefix);
+        bool AddItem(string value);
     }
 }
