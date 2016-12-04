@@ -77,7 +77,6 @@ namespace AutocompleteServiceWithTrieTree.Controllers
 
         private string ValidateInput(string input)
         {
-            //input = input.TrimEnd();
             //only take letters for this sample
             if (Regex.IsMatch(input, "^[a-z]+$", RegexOptions.Compiled | RegexOptions.IgnoreCase))
             {
