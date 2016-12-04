@@ -81,13 +81,7 @@
                 $.ajax({
                     url: "http://localhost:62651/api/autocomplete/" + $("#newName").val(),
                     type: "POST",
-                    contentType: "application/json",
-                    success: function (result) {
-                        if (result.Success)
-                            alert("The name was added successfully.");
-                        else
-                            alert("There was no change. The name was already in the list.")
-                    }
+                    contentType: "application/json"
                 });
             });
         });

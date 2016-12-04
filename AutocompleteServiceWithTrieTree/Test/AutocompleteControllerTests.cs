@@ -6,7 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web.Http.Results;
-using AutocompleteServiceWithTrieTree.Models;
+using System.Net.Http;
+using System.Net;
 
 namespace Test
 {
@@ -19,10 +20,11 @@ namespace Test
         {
             client = Substitute.For<IClient>();
             controller = new AutocompleteController(client);
+            controller.Request = new HttpRequestMessage();
         }
 
         [Fact]
-        public void GetOkResponse()
+        public void Get_OkResponse()
         {
             string prefix = "ab";
             var matches = new List<string> { "abe", "aba" };
@@ -34,12 +36,32 @@ namespace Test
         }
 
         [Fact]
-        public void GetNotFoundResponse()
+        public void Get_NotFoundResponse()
         {
             var matches = new List<string>();
             client.GetPrefixMatches(Arg.Any<string>()).Returns(matches);
             NotFoundResult result = controller.GetMatches("33") as NotFoundResult;
             Assert.NotNull(result);
+        }
+
+        [Fact]
+        public void Get_NullInput()
+        {
+            var result = controller.GetMatches(null) as BadRequestErrorMessageResult;
+            Assert.NotNull(result);
+            Assert.Equal<string>("Valid input is expected.", result.Message);
+        }
+        
+        [Theory]
+        [InlineData(new object[] { "a ", typeof(NotFoundResult)})]
+        [InlineData(new object[] { " ar", typeof(NotFoundResult) })]
+        [InlineData(new object[] { " a r", typeof(NotFoundResult) })]
+        [InlineData(new object[] { "a rm", typeof(NotFoundResult) })]
+        [InlineData(new object[] { "arm ", typeof(NotFoundResult) })]
+        public void Get_InputWithSpaces(string prefix, Type expected)
+        {
+            var result = controller.GetMatches("a ");
+            Assert.Equal(expected, result.GetType());
         }
         
         [Fact]
@@ -47,7 +69,7 @@ namespace Test
         {
             var errorMessage = "Object reference not set to an instance of an object.";
             client.When(c => c.GetPrefixMatches(Arg.Any<string>())).Throw(new NullReferenceException(errorMessage));
-            BadRequestErrorMessageResult result = controller.GetMatches(Arg.Any<string>()) as BadRequestErrorMessageResult;
+            BadRequestErrorMessageResult result = controller.GetMatches("ann") as BadRequestErrorMessageResult;
             Assert.NotNull(result);
             Assert.Equal<string>(errorMessage, result.Message);
         }
@@ -57,10 +79,8 @@ namespace Test
         {
             var prefix = "bee";
             client.AddItem(prefix).Returns(true);
-            var result = controller.PostItem(prefix) as OkNegotiatedContentResult<PostResult>;
-            var post = result.Content as PostResult;
-            Assert.NotNull(post);
-            Assert.Equal<bool>(true, post.Success);
+            var result = controller.PostItem(prefix) as ResponseMessageResult;
+            Assert.Equal(HttpStatusCode.Created, result.Response.StatusCode);
         }
 
         [Fact]
@@ -68,10 +88,16 @@ namespace Test
         {
             var prefix = "all";
             client.AddItem(prefix).Returns(false);
-            var result = controller.PostItem(prefix) as OkNegotiatedContentResult<PostResult>;
-            var post = result.Content as PostResult;
-            Assert.NotNull(post);
-            Assert.Equal<bool>(false, post.Success);
+            var result = controller.PostItem(prefix) as ResponseMessageResult;
+            Assert.Equal(HttpStatusCode.NotModified, result.Response.StatusCode);
+        }
+
+        [Fact]
+        public void Post_NullInput()
+        {
+            var result = controller.PostItem(null) as BadRequestErrorMessageResult;
+            Assert.NotNull(result);
+            Assert.Equal<string>("Valid input is expected.", result.Message);
         }
 
         [Fact]
@@ -79,7 +105,7 @@ namespace Test
         {
             var errorMessage = "Object reference not set to an instance of an object.";
             client.When(c => c.AddItem(Arg.Any<string>())).Throw(new NullReferenceException(errorMessage));
-            BadRequestErrorMessageResult result = controller.GetMatches(Arg.Any<string>()) as BadRequestErrorMessageResult;
+            BadRequestErrorMessageResult result = controller.PostItem("something") as BadRequestErrorMessageResult;
             Assert.NotNull(result);
             Assert.Equal<string>(errorMessage, result.Message);
         }

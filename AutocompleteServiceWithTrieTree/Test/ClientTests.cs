@@ -52,6 +52,13 @@ namespace Test
         }
 
         [Fact]
+        public void InputWithTrailingSpaces()
+        {
+            var list = client.GetPrefixMatches("a ")?.ToArray();
+            Assert.Equal(new string[0], list);
+        }
+
+        [Fact]
         public void NullInput()
         {
             var list = client.GetPrefixMatches(null)?.ToArray();

@@ -18,6 +18,10 @@ namespace AutoComplete.DataStructure
             this.root = new Node('^', parent: null, depth: 0);
         }
 
+        /// <summary>
+        /// Adds all items in the source enumerable
+        /// </summary>
+        /// <param name="items">Collection of items</param>
         public void AddRange(IEnumerable<string> items)
         {
             foreach (string s in items)
@@ -26,6 +30,11 @@ namespace AutoComplete.DataStructure
             }
         }
 
+        /// <summary>
+        /// Adds an individual item to the Trie
+        /// </summary>
+        /// <param name="s">String to be added</param>
+        /// <returns></returns>
         public Node Add(string s)
         {
             //find the pivot character where to branch out for a different suffix. Root returned if first letter not found
@@ -47,6 +56,11 @@ namespace AutoComplete.DataStructure
             return current;
         }
 
+        /// <summary>
+        /// Finds all matches from a prefix
+        /// </summary>
+        /// <param name="input">Prefix to be searched</param>
+        /// <returns></returns>
         public IEnumerable<string> FindMatches(string input)
         {
             if (!String.IsNullOrWhiteSpace(input))
@@ -68,6 +82,12 @@ namespace AutoComplete.DataStructure
             }
         }
 
+        /// <summary>
+        /// Finds a node from where to diverge, if there is a common prefix.
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="isAdding"></param>
+        /// <returns>Node of the last matching character or the Root</returns>
         internal Node FindCommonPrefixNode(string input, bool isAdding = false)
         {
             var currentNode = root;

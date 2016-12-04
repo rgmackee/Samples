@@ -16,12 +16,22 @@ namespace AutoComplete
             tree.AddRange(data);
         }
 
+        /// <summary>
+        /// Adds an item to the trie
+        /// </summary>
+        /// <param name="value">Value to be added</param>
+        /// <returns></returns>
         public bool AddItem(string value)
         {
             var node = tree.Add(value);
             return node != null;
         }
 
+        /// <summary>
+        /// Gets all items that match the prefix
+        /// </summary>
+        /// <param name="prefix">Prefix to be searched</param>
+        /// <returns>List of matches</returns>
         public IEnumerable<string> GetPrefixMatches(string prefix)
         {
             IEnumerable<string> list = tree?.FindMatches(prefix);
