@@ -9,7 +9,7 @@ namespace Test
     public class ClientTests
     {
         private Client client;
-        private string[] data = { "arm", "armed", "arms", "all", "dam", "damn", "jazz", "jaws" };
+        private string[] data = { "arm", "armed", "arms", "all", "dam", "damn", "daw-g", "jazz", "jaws" };
 
         public ClientTests()
         {
@@ -19,9 +19,10 @@ namespace Test
         [Theory]
         [InlineData("al", new string[] { "all" })]
         [InlineData("arm", new string[] { "arm", "armed", "arms" })]
-        [InlineData("d", new string[] { "dam", "damn" })]
+        [InlineData("d", new string[] { "dam", "damn", "daw-g" })]
         [InlineData("ja", new string[] { "jaws", "jazz" })]
         [InlineData("jaws", new string[] { "jaws" })]
+        [InlineData("daw-", new string[] { "daw-g" })]
         public void PositiveMatches(string prefix, IEnumerable<string> expected)
         {
             var list = client.GetPrefixMatches(prefix)?.ToArray();

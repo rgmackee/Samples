@@ -75,10 +75,13 @@ namespace AutocompleteServiceWithTrieTree.Controllers
             }
         }
 
-        private string ValidateInput(string input)
+        private string ValidateInput(string input, bool isSearch = true)
         {
-            //only take letters for this sample
-            if (Regex.IsMatch(input, "^[a-z]+$", RegexOptions.Compiled | RegexOptions.IgnoreCase))
+            //Only take letters (and one optional hyphen) for this sample
+            var patternSearch = "^[a-z]+-?[a-z]*$";
+            var patternPost = "^[a-z]+(-([a-z]+))?$";
+            var selectedPattern = isSearch ? patternSearch : patternPost;
+            if (Regex.IsMatch(input, selectedPattern, RegexOptions.Compiled | RegexOptions.IgnoreCase))
             {
                 return input.ToLower();
             }

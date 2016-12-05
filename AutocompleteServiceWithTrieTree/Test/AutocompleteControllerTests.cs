@@ -101,6 +101,13 @@ namespace Test
         }
 
         [Fact]
+        public void Post_IgnoredInput()
+        {
+            var result = controller.PostItem("-a") as ResponseMessageResult;
+            Assert.Equal(HttpStatusCode.NotModified, result.Response.StatusCode);
+        }
+
+        [Fact]
         public void Post_ExceptionHandled()
         {
             var errorMessage = "Object reference not set to an instance of an object.";
