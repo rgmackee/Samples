@@ -60,7 +60,7 @@ namespace Test
         [InlineData(new object[] { "arm ", typeof(NotFoundResult) })]
         public void Get_InputWithSpaces(string prefix, Type expected)
         {
-            var result = controller.GetMatches("a ");
+            var result = controller.GetMatches(prefix);
             Assert.Equal(expected, result.GetType());
         }
         
@@ -100,11 +100,16 @@ namespace Test
             Assert.Equal<string>("Valid input is expected.", result.Message);
         }
 
-        [Fact]
-        public void Post_IgnoredInput()
+        [Theory]
+        [InlineData(new object[] { "-a", HttpStatusCode.NotModified })]
+        [InlineData(new object[] { "ann-", HttpStatusCode.NotModified })]
+        [InlineData(new object[] { "ann-ma-rie", HttpStatusCode.NotModified })]
+        [InlineData(new object[] { "ann marie", HttpStatusCode.NotModified })]
+        [InlineData(new object[] { " ann", HttpStatusCode.NotModified })]
+        public void Post_IgnoredInput(string input, HttpStatusCode expected)
         {
-            var result = controller.PostItem("-a") as ResponseMessageResult;
-            Assert.Equal(HttpStatusCode.NotModified, result.Response.StatusCode);
+            var result = controller.PostItem(input) as ResponseMessageResult;
+            Assert.Equal(expected, result.Response.StatusCode);
         }
 
         [Fact]
